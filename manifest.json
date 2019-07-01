@@ -9,7 +9,7 @@
     "content_scripts":[
         {
             "matches": ["http://tl.cyg.changyou.com/goods/*"],
-            "js": ["jquery-3.4.1.js","popup.js"],
+            "js": ["popup.js"],
             "run_at":"document_start"
         }
     ],
