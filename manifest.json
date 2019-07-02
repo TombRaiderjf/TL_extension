@@ -9,7 +9,10 @@
     "content_scripts":[
         {
             "matches": ["http://tl.cyg.changyou.com/goods/char_detail*"],
-            "js": ["popup.js"],
+            "js": [
+                "js/jquery.js",
+                "js/c_character_info_page.js"
+            ],
             "run_at":"document_end"
         }
     ],
