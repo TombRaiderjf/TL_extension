@@ -8,9 +8,9 @@
     },
     "content_scripts":[
         {
-            "matches": ["http://tl.cyg.changyou.com/goods/*"],
+            "matches": ["http://tl.cyg.changyou.com/goods/char_detail*"],
             "js": ["popup.js"],
-            "run_at":"document_start"
+            "run_at":"document_end"
         }
     ],
     "permissions": [
