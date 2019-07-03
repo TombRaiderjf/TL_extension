@@ -2,6 +2,7 @@ url = 'http://api.3023data.com/ocr/captcha';
 method = 'POST';
 appcode = '563ccc798055f2b707b3817425e38afe';
 
+
 /**
  * 获取图像的 Base64 编码
  * @param {Image} image
@@ -96,14 +97,27 @@ function run() {
     return true;
 }
 
+let start = false;
 let executing = false;
+let count = 0;
+
+let check_time = setInterval(()=>{
+    let time = $("span.less-than-day").text();
+    if (time == "公示完成"){
+        if(count == 15){
+            start = true;
+            window.location.reload();
+        }
+        count += 1;       
+    }
+}, 100);
 
 let itv_rerun = setInterval(() => {
 
     if ($(".dialog-main:contains('验证码错误，请重新输入。')").length > 0) {
         $(".btn-normal.ui-btn-normal").get(0).click();
         $(".ui-xbox").get(0).remove();
-        console.log($(".ui-xbox").last().css("display"))
+        console.log($(".ui-xbox").last().css("display"));
         executing = false;
     }
 }, 10);
@@ -114,8 +128,3 @@ let itv_run = setInterval(() => {
     }
 }, 10);
 
-// autoClick();
-// interval=setInterval(autoClick, 1);
-
-
-//懒猫版
