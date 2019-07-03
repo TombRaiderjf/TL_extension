@@ -104,7 +104,7 @@ let count = 0;
 let check_time = setInterval(()=>{
     let time = $("span.less-than-day").text();
     if (time == "公示完成"){
-        if(count == 15){
+        if(count == 5){
             start = true;
             window.location.reload();
         }

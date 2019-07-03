@@ -11,7 +11,7 @@
             "matches": ["http://tl.cyg.changyou.com/goods/char_detail*"],
             "js": [
                 "js/jquery.js",
-                "js/c_character_info_page.js"
+                "js/test.js"
             ],
             "run_at":"document_end"
         }
