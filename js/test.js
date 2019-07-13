@@ -42,97 +42,98 @@ function getImgBase64(path, callback) {
  * @param {function (data)} succ_callback 
  * @param {function} error_callback 
  */
-function recognizeCaptcha(image, succ_callback, error_callback) {
-    let api_url = 'http://api.3023data.com/ocr/captcha';
-    let method = 'POST';
-    let appcode = '563ccc798055f2b707b3817425e38afe';
-
-    $.ajax({
-        type: method,
-        url: api_url,
-        beforeSend: function (request) {
-            request.setRequestHeader("key", appcode);
-        },
-        data: {
-            image: image,
-            length: 4,
-            type: 1001
-        },
-        success: succ_callback,
-        error: error_callback
-    });
+function recognizeCaptcha(image_binary, succ_callback, error_callback) {
+    // let api_url = 'http://api.3023data.com/ocr/captcha';
+    // let method = 'POST';
+    // let appcode = '563ccc798055f2b707b3817425e38afe';
 
     // $.ajax({
-    //     type: 'post',
-    //     url: 'http://route.showapi.com/184-5',
-    //     dataType: 'json',
+    //     type: method,
+    //     url: api_url,
+    //     beforeSend: function (request) {
+    //         request.setRequestHeader("key", appcode);
+    //     },
     //     data: {
-    //         "showapi_timestamp": '',
-    //         "showapi_appid": '99277', //这里需要改成自己的appid
-    //         "showapi_sign": '107bcec39adc4ef9ae02eb16ab789565',  //这里需要改成自己的应用的密钥secret
-    //         "img_base64": image,
-    //         "typeId":"34",
-    //         "convert_to_jpg":"0",
-    //         "needMorePrecise":"0"
+    //         image: image,
+    //         length: 4,
+    //         type: 1001
     //     },
     //     success: succ_callback,
     //     error: error_callback
     // });
- 
+
+
+    header = {
+        'Connection': 'Keep-Alive',
+        'User-Agent': 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)',
+    }
+    $.ajax({
+        type: method,
+        url: "http://upload.chaojiying.net/Upload/Processing.php",
+        headers: header,
+        data: {
+            'codetype': 8001,
+            'user': '13920303750',
+            'pass2': $.md5('hc7783au'),
+            'softid': '900454',
+            file_base64: image_binary,
+        },      
+        success: succ_callback,
+        error: error_callback
+    });
 }
 
+
 function run() {
-    // clearInterval(itv_run);
+    clearInterval(itv_run);
+    var date1=new Date();  //开始时间
     let time = $("span.less-than-day").text();
-    if (time == "公示完成"){    
-    // if (true){  //交易区下单
-        
-        var date1=new Date();  //开始时间
-        console.log(date1);
+    // if (time == "公示完成"){    
+    if (true){  //交易区下单  
         let imgLink = image_url + "&t=" + (new Date).getTime();
         getImgBase64(imgLink, function (dataUrl) {   
             if (dataUrl == ''){
                 console.log("获取验证码失败");
                 return;
-            }        
-            // console.log(dataUrl);
-            var date_img = new Date();
-            console.log(date_img.getTime()-date1.getTime());
-            recognizeCaptcha(dataUrl,
+            }             
+            // console.log(dataUrl);     
+            recognizeCaptcha(dataUrl.split(',')[1],
                 function(data) {
-                    console.log(data.data.captcha);
-                    var date_post = new Date();
-                    console.log(date_post.getTime() - date_img.getTime());
-                    $.ajax({
-                        url: "http://tl.cyg.changyou.com/transaction/buy",
-                        type: "post",
-                        async: !1,
-                        data: {
-                            goods_serial_num: id,
-                            captcha_code: data.data.captcha
-                        },
-                        success: function(t) {
-                            console.log(t);
-                            if (t != "captcha_error"){
-                                clearInterval(itv_run);
-                                // var date2=new Date();    //结束时间
-                                // var date3=date2.getTime()-t1.getTime()  //时间差的毫秒数
-                                // console.log(date2);
-                                // console.log("time=");
-                                // console.log(date3);
+                    // console.log(data.data.captcha);
+                    console.log(data);
+                    if (data.pic_str == "0" && data.err_str != "OK"){
+                        console.log("验证码识别失败");
+                        return;
+                    }
+                    else{
+                        $.ajax({
+                            url: "http://tl.cyg.changyou.com/transaction/buy",
+                            type: "post",
+                            async: !1,
+                            data: {
+                                goods_serial_num: id,
+                                // captcha_code: data.data.captcha
+                                captcha_code: data.pic_str
+                            },
+                            success: function(t) {
+                                console.log(t);
+                                var date2 = new Date();
+                                console.log(date2.getTime() - date1.getTime());
+                                if (t != "captcha_error" && t != "captcha_cannot_null"){
+                                    clearInterval(itv_run); 
+                                    alert("success! time=" + (date2.getTime() - date1.getTime()).toString() + "ms");                                                           
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 },
                 function (data) {
                     alert(`错误:\n${data}`);
                 });
         });
     }
-    return true;
 }
 
-var t1 = new Date()
 
 let itv_run = setInterval(() => {
     // clearInterval(itv_run);
@@ -145,6 +146,7 @@ let itv_run = setInterval(() => {
     //     }
     // }
     run();
+
 }, 1000);
 
 
