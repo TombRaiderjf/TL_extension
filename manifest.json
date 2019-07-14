@@ -11,8 +11,7 @@
             "matches": ["http://tl.cyg.changyou.com/goods/char_detail*"],
             "js": [
                 "js/jquery.js",
-                "js/md5_jquery.js",
-                "js/test.js"
+                "js/collectImg.js"
             ],
             "run_at":"document_end"
         }

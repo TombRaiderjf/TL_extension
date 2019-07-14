@@ -72,12 +72,13 @@ function recognizeCaptcha(image_binary, succ_callback, error_callback) {
         url: "http://upload.chaojiying.net/Upload/Processing.php",
         headers: header,
         data: {
-            'codetype': 8001,
+            'codetype': 1902,
             'user': '13920303750',
-            'pass2': $.md5('hc7783au'),
+            'pass2': '268639dc8052f60dc7fe58f2b7a6bd37',
             'softid': '900454',
             file_base64: image_binary,
-        },      
+        },   
+        async: !1,   
         success: succ_callback,
         error: error_callback
     });
@@ -85,27 +86,35 @@ function recognizeCaptcha(image_binary, succ_callback, error_callback) {
 
 
 function run() {
-    clearInterval(itv_run);
+    
     var date1=new Date();  //开始时间
     let time = $("span.less-than-day").text();
-    // if (time == "公示完成"){    
-    if (true){  //交易区下单  
+    if (restTime < 0){    
+    // if (true){  //交易区下单 
+        // clearInterval(itv_run); 
+        running = true;
+        date1 = new Date();
+        console.log("start!");
         let imgLink = image_url + "&t=" + (new Date).getTime();
         getImgBase64(imgLink, function (dataUrl) {   
             if (dataUrl == ''){
                 console.log("获取验证码失败");
+                running=false;
                 return;
-            }             
-            // console.log(dataUrl);     
+            }        
+            let t1 = new Date();     
             recognizeCaptcha(dataUrl.split(',')[1],
                 function(data) {
                     // console.log(data.data.captcha);
                     console.log(data);
                     if (data.pic_str == "0" && data.err_str != "OK"){
                         console.log("验证码识别失败");
+                        running = false;
                         return;
                     }
                     else{
+                        let t2 = new Date();
+                        console.log("识别验证码时间="+(t2.getTime()-t1.getTime()).toString());
                         $.ajax({
                             url: "http://tl.cyg.changyou.com/transaction/buy",
                             type: "post",
@@ -119,6 +128,7 @@ function run() {
                                 console.log(t);
                                 var date2 = new Date();
                                 console.log(date2.getTime() - date1.getTime());
+                                running = false;
                                 if (t != "captcha_error" && t != "captcha_cannot_null"){
                                     clearInterval(itv_run); 
                                     alert("success! time=" + (date2.getTime() - date1.getTime()).toString() + "ms");                                                           
@@ -132,22 +142,22 @@ function run() {
                 });
         });
     }
+
 }
 
 
-let itv_run = setInterval(() => {
-    // clearInterval(itv_run);
-    // for(var y = 0;y<5;y++){
-    //     run();
-    //     var sum = 0;
-    //     for(var x=0;i<100000;x++)
-    //     {
-    //         sum += x;
-    //     }
-    // }
-    run();
+var restTime = parseInt($(".less-than-day").attr("data-second"));
+console.log(restTime);
+var running = false;
 
-}, 1000);
+let itv_run = setInterval(() => {
+    if (!running){
+        run();
+        console.log((new Date()).getTime());
+        restTime = restTime - 1;
+    }
+
+}, 5000);
 
 
 
