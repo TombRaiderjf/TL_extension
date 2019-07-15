@@ -61,11 +61,9 @@ function recognizeCaptcha(image_binary, succ_callback, error_callback) {
     });
 }
 
-var count = 0;
+var count = 4400;
 
 function run() {    
-    var start = new Date();
-    var run = false;
     var date1=new Date();  //开始时间
     console.log("!!start-------" + count.toString());
     let imgLink = image_url + "&t=" + (new Date).getTime();
@@ -98,10 +96,8 @@ function run() {
                             console.log(t);
                             var date2 = new Date();
                             console.log(date2.getTime() - date1.getTime());
-                            run = true;
                             if (t != "captcha_error" && t != "captcha_cannot_null"){
                                 console.log("!!success---------" + count.toString());
-                                console.log(postData);
                                 $.ajax({
                                     url: 'http://47.102.140.114/TL_changyige/storeImage.php',
                                     data: postData,
@@ -116,6 +112,25 @@ function run() {
 
                                 })
                             }
+                            if (t == "captcha_error"){
+                                $.ajax({
+                                    url: 'http://upload.chaojiying.net/Upload/ReportError.php',
+                                    data: {
+                                        'user': '13920303750',
+                                        'pass2': '268639dc8052f60dc7fe58f2b7a6bd37',
+                                        'softid': '900454',
+                                        'id': data.pic_id
+                                    },
+                                    type: method,
+                                    dataType: 'text',
+                                    success: function(response){
+                                        console.log(response);
+                                    },
+                                    error: function(response){
+                                        console.log(response);
+                                    }
+                                })
+                            }
                         }
                     });
                 }
@@ -124,16 +139,13 @@ function run() {
                 alert(`错误:\n${data}`);
             });
     });
-    
-    var end = new Date();
-    console.log(end.getTime()-start.getTime());
 }
 
 let itv_run = setInterval(() => {
     // clearInterval(itv_run);
     run();
     count += 1;
-    if (count == 5){
+    if (count == 8000){
         clearInterval(itv_run);
     }
-}, 8000);
+}, 10000);
