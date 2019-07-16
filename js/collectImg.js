@@ -61,7 +61,7 @@ function recognizeCaptcha(image_binary, succ_callback, error_callback) {
     });
 }
 
-var count = 4400;
+var count = 13001;
 
 function run() {    
     var date1=new Date();  //开始时间
@@ -145,7 +145,7 @@ let itv_run = setInterval(() => {
     // clearInterval(itv_run);
     run();
     count += 1;
-    if (count == 8000){
+    if (count == 13200){
         clearInterval(itv_run);
     }
 }, 10000);
